@@ -5,21 +5,23 @@ import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
 
 import { Container } from './styles';
-import { FlatList } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { EmptyList } from '@components/EmptyList';
 import { Button } from '@components/Button';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { groupGetAll } from '@storage/group/groupsGetAll';
+import { useAuth } from '@hooks/useAuth';
 
 export function Groups() {
   const [groups, setGroups] = useState<string[]>([]);
 
   const { navigate } = useNavigation();
+  const { signOut, user } = useAuth();
 
   async function fetchGroups() {
     try {
-      const storedGroups = await groupGetAll();
+      const storedGroups = await groupGetAll(user.id);
 
       setGroups(storedGroups);
     } catch (error) {
@@ -43,8 +45,10 @@ export function Groups() {
 
   return (
     <Container>
-      <Header />
-
+      <Pressable onPress={signOut}>
+        <Header />
+      </Pressable>
+      <Highlight title="Bem vindo, " subtitle={user.name} />
       <Highlight title="Turmas" subtitle="Jogue com a sua turma" />
       <FlatList
         data={groups}
@@ -58,7 +62,6 @@ export function Groups() {
         )}
         showsVerticalScrollIndicator={false}
       />
-
       <Button title="Criar nova turma" onPress={handleGoToNew} />
     </Container>
   );

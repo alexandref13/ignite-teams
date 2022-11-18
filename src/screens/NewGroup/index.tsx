@@ -12,6 +12,7 @@ import { Loading } from '@components/Loading';
 
 import { groupCreate } from '@storage/group/groupCreate';
 import { AppError } from '@utils/AppError';
+import { useAuth } from '@hooks/useAuth';
 
 export function NewGroup() {
   const newGroupNameInputRef = useRef<TextInput>(null);
@@ -20,6 +21,7 @@ export function NewGroup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { navigate } = useNavigation();
+  const { user } = useAuth();
 
   async function handleCreateNew() {
     if (!group.trim()) {
@@ -27,7 +29,7 @@ export function NewGroup() {
     }
     try {
       setIsLoading(true);
-      await groupCreate(group);
+      await groupCreate(group, user.id);
 
       navigate('players', { group: group });
 

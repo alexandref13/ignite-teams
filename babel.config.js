@@ -11,6 +11,8 @@ module.exports = function (api) {
           alias: {
             '@assets': './src/assets',
             '@components': './src/components',
+            '@contexts': './src/contexts',
+            '@hooks': './src/hooks',
             '@routes': './src/routes',
             '@screens': './src/screens',
             '@storage': './src/storage',
@@ -19,6 +21,7 @@ module.exports = function (api) {
           },
         },
       ],
+      ['inline-dotenv'],
     ],
   };
 };

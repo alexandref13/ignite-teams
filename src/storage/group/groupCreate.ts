@@ -5,9 +5,9 @@ import { AppError } from '@utils/AppError';
 
 import { groupGetAll } from './groupsGetAll';
 
-export async function groupCreate(newGroupName: string) {
+export async function groupCreate(newGroupName: string, user_id: string) {
   try {
-    const storedGroups = await groupGetAll();
+    const storedGroups = await groupGetAll(user_id);
 
     const hasSameName = storedGroups.find(
       (group) => group.toLowerCase() === newGroupName.toLowerCase(),
@@ -21,7 +21,7 @@ export async function groupCreate(newGroupName: string) {
 
     const storage = JSON.stringify([...storedGroups, newGroupName]);
 
-    await AsyncStorage.setItem(GROUP_COLLECTION, storage);
+    await AsyncStorage.setItem(`${GROUP_COLLECTION}:user_${user_id}`, storage);
   } catch (error) {
     throw error;
   }

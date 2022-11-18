@@ -21,6 +21,7 @@ import { AppError } from '@utils/AppError';
 import { playerRemoveByGroup } from '@storage/player/playerRemoveByGroup';
 import { groupRemove } from '@storage/group/groupRemove';
 import { Loading } from '@components/Loading';
+import { useAuth } from '@hooks/useAuth';
 
 interface RouteParams {
   group: string;
@@ -35,6 +36,7 @@ export function Players() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { navigate } = useNavigation();
+  const { user } = useAuth();
 
   const { params } = useRoute();
   const { group } = params as RouteParams;
@@ -53,7 +55,7 @@ export function Players() {
     };
 
     try {
-      await playerAddByGroup(newPlayer, group);
+      await playerAddByGroup(newPlayer, group, user.id);
 
       newPlayerNameInputRef.current?.blur();
       setNewPlayerName('');
@@ -72,7 +74,7 @@ export function Players() {
 
   async function handleRemovePlayer(playerName: string) {
     try {
-      await playerRemoveByGroup(group, playerName);
+      await playerRemoveByGroup(group, playerName, user.id);
       fetchPlayersByTeam();
     } catch (error) {
       console.log(error);
@@ -93,7 +95,7 @@ export function Players() {
             text: 'Sim',
             onPress: async () => {
               setIsLoading(true);
-              await groupRemove(group);
+              await groupRemove(group, user.id);
 
               navigate('groups');
             },
@@ -109,7 +111,7 @@ export function Players() {
 
   async function fetchPlayersByTeam() {
     try {
-      const playersByTeam = await playerGetByGroupAndTeam(group, team);
+      const playersByTeam = await playerGetByGroupAndTeam(group, team, user.id);
 
       setPlayers(playersByTeam);
     } catch (error) {
